@@ -33,6 +33,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.Utils;
 import com.xxmassdeveloper.mpchartexample.custom.MyMarkerView;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
@@ -91,9 +92,9 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
 
         // create a custom MarkerView (extend MarkerView) and specify the layout
         // to use for it
-        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
-        mv.setChartView(mChart); // For bounds control
-        mChart.setMarker(mv); // Set the marker to the chart
+//        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
+//        mv.setChartView(mChart); // For bounds control
+//        mChart.setMarker(mv); // Set the marker to the chart
 
         // x-axis limit line
         LimitLine llXAxis = new LimitLine(10f, "Index 10");
@@ -106,32 +107,35 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
         xAxis.enableGridDashedLine(10f, 10f, 0f);
         //xAxis.setValueFormatter(new MyCustomXAxisValueFormatter());
         //xAxis.addLimitLine(llXAxis); // add x-axis limit line
+        xAxis.setDrawGridLines(true);
+        xAxis.setGridDashedLine(new DashPathEffect(new float[]{100f, 0f}, 0f));
 
 
         Typeface tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
 
-        LimitLine ll1 = new LimitLine(150f, "Upper Limit");
-        ll1.setLineWidth(4f);
-        ll1.enableDashedLine(10f, 10f, 0f);
-        ll1.setLabelPosition(LimitLabelPosition.RIGHT_TOP);
-        ll1.setTextSize(10f);
-        ll1.setTypeface(tf);
-
-        LimitLine ll2 = new LimitLine(-30f, "Lower Limit");
-        ll2.setLineWidth(4f);
-        ll2.enableDashedLine(10f, 10f, 0f);
-        ll2.setLabelPosition(LimitLabelPosition.RIGHT_BOTTOM);
-        ll2.setTextSize(10f);
-        ll2.setTypeface(tf);
+//        LimitLine ll1 = new LimitLine(150f, "Upper Limit");
+//        ll1.setLineWidth(4f);
+//        ll1.enableDashedLine(10f, 10f, 0f);
+//        ll1.setLabelPosition(LimitLabelPosition.RIGHT_TOP);
+//        ll1.setTextSize(10f);
+//        ll1.setTypeface(tf);
+//
+//        LimitLine ll2 = new LimitLine(-30f, "Lower Limit");
+//        ll2.setLineWidth(4f);
+//        ll2.enableDashedLine(10f, 10f, 0f);
+//        ll2.setLabelPosition(LimitLabelPosition.RIGHT_BOTTOM);
+//        ll2.setTextSize(10f);
+//        ll2.setTypeface(tf);
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
-        leftAxis.addLimitLine(ll1);
-        leftAxis.addLimitLine(ll2);
+//        leftAxis.addLimitLine(ll1);
+//        leftAxis.addLimitLine(ll2);
         leftAxis.setAxisMaximum(200f);
         leftAxis.setAxisMinimum(-50f);
         //leftAxis.setYOffset(20f);
-        leftAxis.enableGridDashedLine(10f, 10f, 0f);
+        leftAxis.enableGridDashedLine(10f, 0f, 0f);
+        leftAxis.setGridDashedLine(new DashPathEffect(new float[]{100f, 0f}, 0f));
         leftAxis.setDrawZeroLine(false);
 
         // limit lines are drawn behind data (and not on top)
@@ -143,20 +147,33 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
         //mChart.getViewPortHandler().setMaximumScaleX(2f);
 
         // add data
-        setData(45, 100);
+        setData(40, 100);
+        LineData lineData = mChart.getLineData();
+        lineData.setDrawValues(false);
+        List<ILineDataSet> dataSets = lineData.getDataSets();
+        for (ILineDataSet set : dataSets){
+            LineDataSet dataSet = (LineDataSet) set;
+            dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+            dataSet.setFillColor(Color.BLUE);
+        }
 
 //        mChart.setVisibleXRange(20);
 //        mChart.setVisibleYRange(20f, AxisDependency.LEFT);
 //        mChart.centerViewTo(20, 50, AxisDependency.LEFT);
 
-        mChart.animateX(2500);
+//        mChart.animateX(2500);
         //mChart.invalidate();
 
         // get the legend (only possible after setting data)
         Legend l = mChart.getLegend();
+        l.setDrawInside(false);
 
         // modify the legend ...
         l.setForm(LegendForm.LINE);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+
+//        l.setFormLineWidth(1f);
 
         // // dont forget to refresh the drawing
         // mChart.invalidate();
@@ -373,17 +390,18 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
             set1.setDrawIcons(false);
 
             // set the line to be drawn like this "- - - - - -"
-            set1.enableDashedLine(10f, 5f, 0f);
-            set1.enableDashedHighlightLine(10f, 5f, 0f);
-            set1.setColor(Color.BLACK);
-            set1.setCircleColor(Color.BLACK);
-            set1.setLineWidth(1f);
-            set1.setCircleRadius(3f);
-            set1.setDrawCircleHole(false);
+//            set1.enableDashedLine(10f, 5f, 0f);
+//            set1.enableDashedHighlightLine(10f, 5f, 0f);
+            set1.setColor(0xff27AB9D);
+//            set1.setCircleColor(Color.BLACK);
+            set1.setLineWidth(2f);
+//            set1.setCircleRadius(3f);
+//            set1.setDrawCircleHole(false);
             set1.setValueTextSize(9f);
-            set1.setDrawFilled(true);
+            set1.setDrawFilled(false);
             set1.setFormLineWidth(1f);
-            set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+            set1.setDrawCircles(false);
+//            set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
             set1.setFormSize(15.f);
 
             if (Utils.getSDKInt() >= 18) {

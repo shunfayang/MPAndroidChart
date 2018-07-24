@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendForm;
 import com.github.mikephil.charting.components.XAxis;
@@ -21,10 +22,12 @@ import com.github.mikephil.charting.components.YAxis.AxisDependency;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.xxmassdeveloper.mpchartexample.custom.MyCustomXAxisValueFormatter;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
 import java.util.ArrayList;
@@ -72,6 +75,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         mChart.setDrawGridBackground(false);
         mChart.setHighlightPerDragEnabled(true);
 
+
         // if disabled, scaling can be done on x- and y-axis separately
         mChart.setPinchZoom(true);
 
@@ -79,18 +83,20 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         mChart.setBackgroundColor(Color.LTGRAY);
 
         // add data
-        setData(20, 30);
+        int range = 400;
+        setData(20, range);
 
-        mChart.animateX(2500);
+//        mChart.animateX(2500);// 动画
 
         // get the legend (only possible after setting data)
         Legend l = mChart.getLegend();
 
         // modify the legend ...
-        l.setForm(LegendForm.LINE);
+        l.setForm(LegendForm.CIRCLE);
         l.setTypeface(mTfLight);
         l.setTextSize(11f);
         l.setTextColor(Color.WHITE);
+
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
@@ -101,14 +107,14 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         xAxis.setTypeface(mTfLight);
         xAxis.setTextSize(11f);
         xAxis.setTextColor(Color.WHITE);
-        xAxis.setDrawGridLines(false);
+        xAxis.setDrawGridLines(true);
         xAxis.setDrawAxisLine(false);
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTypeface(mTfLight);
         leftAxis.setTextColor(ColorTemplate.getHoloBlue());
-        leftAxis.setAxisMaximum(200f);
-        leftAxis.setAxisMinimum(0f);
+        leftAxis.setAxisMaximum(range);
+        leftAxis.setAxisMinimum(range/4);
         leftAxis.setDrawGridLines(true);
         leftAxis.setGranularityEnabled(true);
 
@@ -116,10 +122,16 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         rightAxis.setTypeface(mTfLight);
         rightAxis.setTextColor(Color.RED);
         rightAxis.setAxisMaximum(900);
-        rightAxis.setAxisMinimum(-200);
+        rightAxis.setAxisMinimum(0);
         rightAxis.setDrawGridLines(false);
         rightAxis.setDrawZeroLine(false);
         rightAxis.setGranularityEnabled(false);
+        rightAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return "$" + value;
+            }
+        });
     }
 
     @Override
@@ -326,14 +338,25 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
             set1 = new LineDataSet(yVals1, "DataSet 1");
 
             set1.setAxisDependency(AxisDependency.LEFT);
-            set1.setColor(ColorTemplate.getHoloBlue());
-            set1.setCircleColor(Color.WHITE);
+//            set1.setColor(ColorTemplate.getHoloBlue());
+//            set1.setCircleColor(Color.WHITE);
+//            set1.setLineWidth(2f);
+//            set1.setCircleRadius(3f);
+//            set1.setFillAlpha(65);
+//            set1.setFillColor(ColorTemplate.getHoloBlue());
+//            set1.setHighLightColor(Color.rgb(244, 117, 117));
+//            set1.setDrawCircleHole(false);
+
+            set1.setDrawIcons(false);
+            set1.setColor(0xff859795);
             set1.setLineWidth(2f);
-            set1.setCircleRadius(3f);
-            set1.setFillAlpha(65);
-            set1.setFillColor(ColorTemplate.getHoloBlue());
-            set1.setHighLightColor(Color.rgb(244, 117, 117));
-            set1.setDrawCircleHole(false);
+            set1.setValueTextSize(9f);
+            set1.setDrawFilled(true);
+            set1.setFormLineWidth(1f);
+            set1.setDrawCircles(false);
+            set1.setFormSize(15.f);
+            set1.setFillDrawable(getResources().getDrawable(R.drawable.set1));
+
             //set1.setFillFormatter(new MyFillFormatter(0f));
             //set1.setDrawHorizontalHighlightIndicator(false);
             //set1.setVisible(false);
@@ -342,32 +365,53 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
             // create a dataset and give it a type
             set2 = new LineDataSet(yVals2, "DataSet 2");
             set2.setAxisDependency(AxisDependency.RIGHT);
-            set2.setColor(Color.RED);
-            set2.setCircleColor(Color.WHITE);
+//            set2.setColor(Color.RED);
+//            set2.setCircleColor(Color.WHITE);
+//            set2.setLineWidth(2f);
+//            set2.setCircleRadius(3f);
+//            set2.setFillAlpha(65);
+//            set2.setFillColor(Color.RED);
+//            set2.setDrawCircleHole(false);
+//            set2.setHighLightColor(Color.rgb(244, 117, 117));
+//            //set2.setFillFormatter(new MyFillFormatter(900f));
+
+            set2.setDrawIcons(false);
+            set2.setColor(0xff27AB9D);
             set2.setLineWidth(2f);
-            set2.setCircleRadius(3f);
-            set2.setFillAlpha(65);
-            set2.setFillColor(Color.RED);
-            set2.setDrawCircleHole(false);
-            set2.setHighLightColor(Color.rgb(244, 117, 117));
-            //set2.setFillFormatter(new MyFillFormatter(900f));
+            set2.setValueTextSize(9f);
+            set2.setDrawFilled(false);
+            set2.setFormLineWidth(1f);
+            set2.setDrawCircles(false);
+            set2.setFormSize(15.f);
 
             set3 = new LineDataSet(yVals3, "DataSet 3");
             set3.setAxisDependency(AxisDependency.RIGHT);
-            set3.setColor(Color.YELLOW);
-            set3.setCircleColor(Color.WHITE);
+//            set3.setColor(Color.YELLOW);
+//            set3.setCircleColor(Color.WHITE);
+//            set3.setLineWidth(2f);
+//            set3.setCircleRadius(3f);
+//            set3.setFillAlpha(65);
+//            set3.setFillColor(ColorTemplate.colorWithAlpha(Color.YELLOW, 200));
+//            set3.setDrawCircleHole(false);
+//            set3.setHighLightColor(Color.rgb(244, 117, 117));
+            set3.setDrawIcons(false);
+            set3.setColor(Color.BLUE);
             set3.setLineWidth(2f);
-            set3.setCircleRadius(3f);
-            set3.setFillAlpha(65);
-            set3.setFillColor(ColorTemplate.colorWithAlpha(Color.YELLOW, 200));
-            set3.setDrawCircleHole(false);
-            set3.setHighLightColor(Color.rgb(244, 117, 117));
+            set3.setValueTextSize(9f);
+            set3.setDrawFilled(false);
+            set3.setFormLineWidth(1f);
+            set3.setDrawCircles(false);
+            set3.setFormSize(15.f);
 
+            set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+            set2.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+            set3.setMode(LineDataSet.Mode.CUBIC_BEZIER);
             // create a data object with the datasets
             LineData data = new LineData(set1, set2, set3);
             data.setValueTextColor(Color.WHITE);
             data.setValueTextSize(9f);
 
+            data.setDrawValues(false);
             // set data
             mChart.setData(data);
         }
