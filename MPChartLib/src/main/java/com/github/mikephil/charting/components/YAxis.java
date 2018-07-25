@@ -192,6 +192,10 @@ public class YAxis extends AxisBase {
         return mDrawBottomYLabelEntry;
     }
 
+    public void setmDrawBottomYLabelEntry(boolean enabled){
+        mDrawBottomYLabelEntry = enabled;
+    }
+
     /**
      * set this to true to enable drawing the top y-label entry. Disabling this can be helpful
      * when the top y-label and

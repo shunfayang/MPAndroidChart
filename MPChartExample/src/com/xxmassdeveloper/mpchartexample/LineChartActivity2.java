@@ -42,7 +42,7 @@ import java.util.List;
 public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListener,
         OnChartValueSelectedListener {
 
-    private LineChart mChart, mChart2, mChart3, mChart4;
+    private LineChart mChartTradeCount, mChartBtcPrice, mChartVolume, mChartUsdPrice;
     private SeekBar mSeekBarX, mSeekBarY;
     private TextView tvX, tvY;
     private String mockData;
@@ -72,40 +72,41 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         mSeekBarY.setOnSeekBarChangeListener(this);
         mSeekBarX.setOnSeekBarChangeListener(this);
 
-        mChart = findViewById(R.id.chart1);
-        setChart(mChart);
-        setChart1Data(200, 400, mChart, tradeCount);
-        setLegend(mChart);
-        setAxis(mChart, Double.valueOf("1.63532902E9").floatValue()*1.2f, 0);
-        mChart.getAxisRight().setDrawLabels(false);
 
-        mChart2 = findViewById(R.id.chart2);
-        setChart(mChart2);
-        setChart2Data(200, 400, mChart2, btcPrice);
-        setLegend(mChart2);
-        setAxis(mChart2, 0.1f*1.2f, 0);
-        mChart2.getAxisLeft().setDrawLabels(false);
+        mChartBtcPrice = findViewById(R.id.chart2);
+        setChart(mChartBtcPrice);
+        setChart2Data(200, 400, mChartBtcPrice, btcPrice);
+        setLegend(mChartBtcPrice);
+        setAxis(mChartBtcPrice, 0.08f, 0.07f);// 不能写死
+        mChartBtcPrice.getAxisLeft().setDrawLabels(false);
 
-        mChart3 = findViewById(R.id.chart3);
-        setChart(mChart3);
-        setChart3Data(200, 400, mChart3, volume);
-        setLegend(mChart3);
-        setAxis(mChart3, Double.valueOf("4.8426103E10").floatValue()*1.2f, 0);
-        mChart3.getAxisRight().setDrawLabels(false);
-        mChart3.getAxisLeft().setDrawLabels(false);
+        mChartVolume = findViewById(R.id.chart3);
+        setChart(mChartVolume);
+        setChart3Data(200, 400, mChartVolume, volume);
+        setLegend(mChartVolume);
+        setAxis(mChartVolume, Double.valueOf("4.8426103E10").floatValue()*1.1f, Double.valueOf("4.8426103E10").floatValue()*0.9f);
+        mChartVolume.getAxisRight().setDrawLabels(false);
+        mChartVolume.getAxisLeft().setDrawLabels(false);
 
-        mChart4 = findViewById(R.id.chart4);
-        setChart(mChart4);
-        setChart4Data(200, 400, mChart4, usdPrice);
-        setLegend(mChart4);
-        setAxis(mChart4, 500*2, 0);
-//        mChart4.getAxisLeft().setDrawLabels(false);
-//        mChart4.getAxisRight().setDrawLabels(false);
+        mChartUsdPrice = findViewById(R.id.chart4);
+        setChart(mChartUsdPrice);
+        setChart4Data(200, 400, mChartUsdPrice, usdPrice);
+        setLegend(mChartUsdPrice);
+        setAxis(mChartUsdPrice, 500, 470);// 不能写死
+//        mChartUsdPrice.getAxisLeft().setDrawLabels(false);
+//        mChartUsdPrice.getAxisRight().setDrawLabels(false);
 
+        // 底部填充的视图
+        mChartTradeCount = findViewById(R.id.chart1);
+        setChart(mChartTradeCount);
+        setChart1Data(200, 400, mChartTradeCount, tradeCount);
+        setLegend(mChartTradeCount);
+        setAxis(mChartTradeCount, Double.valueOf("1.63532902E9").floatValue()*1.1f, Double.valueOf("1.63532902E9").floatValue()*0.5f);
+        mChartTradeCount.getAxisRight().setDrawLabels(false);
 
         MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
-        mv.setChartView(mChart4); // For bounds control
-        mChart4.setMarker(mv); // Set the marker to the chart
+        mv.setChartView(mChartUsdPrice); // For bounds control
+        mChartUsdPrice.setMarker(mv); // Set the marker to the chart
     }
 
     private void setAxis(LineChart chart,float max, float min) {
@@ -199,13 +200,13 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         chart.setDragDecelerationFrictionCoef(0.9f);
 
         // enable scaling and dragging
-        chart.setDragEnabled(true);
-        chart.setScaleEnabled(true);
+        chart.setDragEnabled(false);
+        chart.setScaleEnabled(false);
         chart.setDrawGridBackground(false);
         chart.setHighlightPerDragEnabled(true);
 
         // if disabled, scaling can be done on x- and y-axis separately
-        chart.setPinchZoom(true);
+        chart.setPinchZoom(false);
     }
 
     @Override
@@ -219,7 +220,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
 
         switch (item.getItemId()) {
             case R.id.actionToggleValues: {
-                List<ILineDataSet> sets = mChart.getData()
+                List<ILineDataSet> sets = mChartTradeCount.getData()
                         .getDataSets();
 
                 for (ILineDataSet iSet : sets) {
@@ -228,19 +229,19 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
                     set.setDrawValues(!set.isDrawValuesEnabled());
                 }
 
-                mChart.invalidate();
+                mChartTradeCount.invalidate();
                 break;
             }
             case R.id.actionToggleHighlight: {
-                if (mChart.getData() != null) {
-                    mChart.getData().setHighlightEnabled(!mChart.getData().isHighlightEnabled());
-                    mChart.invalidate();
+                if (mChartTradeCount.getData() != null) {
+                    mChartTradeCount.getData().setHighlightEnabled(!mChartTradeCount.getData().isHighlightEnabled());
+                    mChartTradeCount.invalidate();
                 }
                 break;
             }
             case R.id.actionToggleFilled: {
 
-                List<ILineDataSet> sets = mChart.getData()
+                List<ILineDataSet> sets = mChartTradeCount.getData()
                         .getDataSets();
 
                 for (ILineDataSet iSet : sets) {
@@ -251,11 +252,11 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
                     else
                         set.setDrawFilled(true);
                 }
-                mChart.invalidate();
+                mChartTradeCount.invalidate();
                 break;
             }
             case R.id.actionToggleCircles: {
-                List<ILineDataSet> sets = mChart.getData()
+                List<ILineDataSet> sets = mChartTradeCount.getData()
                         .getDataSets();
 
                 for (ILineDataSet iSet : sets) {
@@ -266,11 +267,11 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
                     else
                         set.setDrawCircles(true);
                 }
-                mChart.invalidate();
+                mChartTradeCount.invalidate();
                 break;
             }
             case R.id.actionToggleCubic: {
-                List<ILineDataSet> sets = mChart.getData()
+                List<ILineDataSet> sets = mChartTradeCount.getData()
                         .getDataSets();
 
                 for (ILineDataSet iSet : sets) {
@@ -280,11 +281,11 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
                             ? LineDataSet.Mode.LINEAR
                             : LineDataSet.Mode.CUBIC_BEZIER);
                 }
-                mChart.invalidate();
+                mChartTradeCount.invalidate();
                 break;
             }
             case R.id.actionToggleStepped: {
-                List<ILineDataSet> sets = mChart.getData()
+                List<ILineDataSet> sets = mChartTradeCount.getData()
                         .getDataSets();
 
                 for (ILineDataSet iSet : sets) {
@@ -294,11 +295,11 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
                             ? LineDataSet.Mode.LINEAR
                             : LineDataSet.Mode.STEPPED);
                 }
-                mChart.invalidate();
+                mChartTradeCount.invalidate();
                 break;
             }
             case R.id.actionToggleHorizontalCubic: {
-                List<ILineDataSet> sets = mChart.getData()
+                List<ILineDataSet> sets = mChartTradeCount.getData()
                         .getDataSets();
 
                 for (ILineDataSet iSet : sets) {
@@ -308,46 +309,46 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
                             ? LineDataSet.Mode.LINEAR
                             : LineDataSet.Mode.HORIZONTAL_BEZIER);
                 }
-                mChart.invalidate();
+                mChartTradeCount.invalidate();
                 break;
             }
             case R.id.actionTogglePinch: {
-                if (mChart.isPinchZoomEnabled())
-                    mChart.setPinchZoom(false);
+                if (mChartTradeCount.isPinchZoomEnabled())
+                    mChartTradeCount.setPinchZoom(false);
                 else
-                    mChart.setPinchZoom(true);
+                    mChartTradeCount.setPinchZoom(true);
 
-                mChart.invalidate();
+                mChartTradeCount.invalidate();
                 break;
             }
             case R.id.actionToggleAutoScaleMinMax: {
-                mChart.setAutoScaleMinMaxEnabled(!mChart.isAutoScaleMinMaxEnabled());
-                mChart.notifyDataSetChanged();
+                mChartTradeCount.setAutoScaleMinMaxEnabled(!mChartTradeCount.isAutoScaleMinMaxEnabled());
+                mChartTradeCount.notifyDataSetChanged();
                 break;
             }
             case R.id.animateX: {
-                mChart.animateX(3000);
-                //mChart.highlightValue(9.7f, 1, false);
+                mChartTradeCount.animateX(3000);
+                //mChartTradeCount.highlightValue(9.7f, 1, false);
                 break;
             }
             case R.id.animateY: {
-                mChart.animateY(3000);
+                mChartTradeCount.animateY(3000);
                 break;
             }
             case R.id.animateXY: {
-                mChart.animateXY(3000, 3000);
+                mChartTradeCount.animateXY(3000, 3000);
                 break;
             }
 
             case R.id.actionSave: {
-                if (mChart.saveToPath("title" + System.currentTimeMillis(), "")) {
+                if (mChartTradeCount.saveToPath("title" + System.currentTimeMillis(), "")) {
                     Toast.makeText(getApplicationContext(), "Saving SUCCESSFUL!",
                             Toast.LENGTH_SHORT).show();
                 } else
                     Toast.makeText(getApplicationContext(), "Saving FAILED!", Toast.LENGTH_SHORT)
                             .show();
 
-                // mChart.saveToGallery("title"+System.currentTimeMillis())
+                // mChartTradeCount.saveToGallery("title"+System.currentTimeMillis())
                 break;
             }
         }
@@ -360,10 +361,10 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         tvX.setText("" + (mSeekBarX.getProgress() + 1));
         tvY.setText("" + (mSeekBarY.getProgress()));
 
-        setChart1Data(mSeekBarX.getProgress() + 1, mSeekBarY.getProgress(), mChart, usdPrice);
+        setChart1Data(mSeekBarX.getProgress() + 1, mSeekBarY.getProgress(), mChartTradeCount, usdPrice);
 
         // redraw
-        mChart.invalidate();
+        mChartTradeCount.invalidate();
     }
 
     private void setChart1Data(int count, float range, LineChart chart, ArrayList<Entry> list) {
@@ -422,7 +423,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
             set1 = new LineDataSet(list, "DataSet 1");
             set1.setAxisDependency(AxisDependency.LEFT);
             set1.setDrawIcons(false);
-            set1.setColor(0xff27AB9D);
+            set1.setColor(0xff317DEC);
             set1.setLineWidth(2f);
             set1.setValueTextSize(9f);
             set1.setDrawFilled(false);
@@ -468,7 +469,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
             set1.setDrawCircles(false);
             set1.setAxisDependency(AxisDependency.RIGHT);
 
-            set1.setColor(0xff27AB9D);
+            set1.setColor(0xffF08422);
             set1.setDrawFilled(false);
             // create a data object with the datasets
             LineData data = new LineData(set1);
@@ -507,7 +508,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
             set1.setDrawCircles(false);
             set1.setAxisDependency(AxisDependency.RIGHT);
 
-            set1.setColor(0xffF08422);
+            set1.setColor(0xff009B8B);
             set1.setDrawFilled(false);
             // create a data object with the datasets
             LineData data = new LineData(set1);
@@ -532,12 +533,12 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
             List<List<String>> list = gson.fromJson(mockData, type);
             for (int i = 0; i<list.size(); i++){
                 List<String> values = list.get(i);
-                int size = values.size();
-                Double time = Double.parseDouble(values.get(0).toString());
-                Double usdprice = Double.parseDouble(values.get(1).toString());
-                Double btcprice = Double.parseDouble(values.get(2).toString());
-                Double volume = Double.parseDouble(values.get(3).toString());
-                Double tradeCount = Double.parseDouble(values.get(4).toString());
+//                Double time = Long.parseLong(values.get(0));
+                Double usdprice = Double.parseDouble(values.get(1));
+                Double btcprice = Double.parseDouble(values.get(2));
+                Double volume = Double.parseDouble(values.get(3));
+                Double tradeCount = Double.parseDouble(values.get(4));
+
                 usdPrice.add(new Entry(i, usdprice.floatValue()));
                 btcPrice.add(new Entry(i, btcprice.floatValue()));
                 this.volume.add(new Entry(i, volume.floatValue()));
@@ -594,11 +595,11 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
     public void onValueSelected(Entry e, Highlight h) {
         Log.i("Entry selected", e.toString());
 
-        mChart.centerViewToAnimated(e.getX(), e.getY(), mChart.getData().getDataSetByIndex(h.getDataSetIndex())
+        mChartTradeCount.centerViewToAnimated(e.getX(), e.getY(), mChartTradeCount.getData().getDataSetByIndex(h.getDataSetIndex())
                 .getAxisDependency(), 500);
-        //mChart.zoomAndCenterAnimated(2.5f, 2.5f, e.getX(), e.getY(), mChart.getData().getDataSetByIndex(dataSetIndex)
+        //mChartTradeCount.zoomAndCenterAnimated(2.5f, 2.5f, e.getX(), e.getY(), mChartTradeCount.getData().getDataSetByIndex(dataSetIndex)
         // .getAxisDependency(), 1000);
-        //mChart.zoomAndCenterAnimated(1.8f, 1.8f, e.getX(), e.getY(), mChart.getData().getDataSetByIndex(dataSetIndex)
+        //mChartTradeCount.zoomAndCenterAnimated(1.8f, 1.8f, e.getX(), e.getY(), mChartTradeCount.getData().getDataSetByIndex(dataSetIndex)
         // .getAxisDependency(), 1000);
     }
 
