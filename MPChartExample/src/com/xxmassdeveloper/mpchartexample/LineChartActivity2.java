@@ -2,7 +2,6 @@
 package com.xxmassdeveloper.mpchartexample;
 
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -28,30 +27,14 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.renderer.YAxisRenderer;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.xxmassdeveloper.mpchartexample.custom.MyCustomXAxisValueFormatter;
-import com.xxmassdeveloper.mpchartexample.model.MockData;
+import com.xxmassdeveloper.mpchartexample.custom.MyMarkerView;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringBufferInputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,13 +42,15 @@ import java.util.List;
 public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListener,
         OnChartValueSelectedListener {
 
-    private LineChart mChart, mChart2;
+    private LineChart mChart, mChart2, mChart3, mChart4;
     private SeekBar mSeekBarX, mSeekBarY;
     private TextView tvX, tvY;
     private String mockData;
-    private ArrayList<Entry> yVals1;
-    private ArrayList<Entry> yVals2;
-    private ArrayList<Entry> yVals3;
+    private ArrayList<Entry> usdPrice;
+    private ArrayList<Entry> btcPrice;
+    private ArrayList<Entry> volume;
+    private ArrayList<Entry> tradeCount;
+    private ArrayList<Entry> yVals5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,29 +73,42 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         mSeekBarX.setOnSeekBarChangeListener(this);
 
         mChart = findViewById(R.id.chart1);
-        mChart2 = findViewById(R.id.chart2);
         setChart(mChart);
-        setChart(mChart2);
-
-
-
-        // set an alternative background color
-//        mChart.setBackgroundColor(Color.Whi);
-
-        // add data
-        setData(200, 400, mChart);
-        setData(200, 400, mChart2);
-
-//        mChart.animateX(2500);// 动画
+        setChart1Data(200, 400, mChart, tradeCount);
         setLegend(mChart);
+        setAxis(mChart, Double.valueOf("1.63532902E9").floatValue()*1.2f, 0);
+        mChart.getAxisRight().setDrawLabels(false);
+
+        mChart2 = findViewById(R.id.chart2);
+        setChart(mChart2);
+        setChart2Data(200, 400, mChart2, btcPrice);
         setLegend(mChart2);
+        setAxis(mChart2, 0.1f*1.2f, 0);
+        mChart2.getAxisLeft().setDrawLabels(false);
+
+        mChart3 = findViewById(R.id.chart3);
+        setChart(mChart3);
+        setChart3Data(200, 400, mChart3, volume);
+        setLegend(mChart3);
+        setAxis(mChart3, Double.valueOf("4.8426103E10").floatValue()*1.2f, 0);
+        mChart3.getAxisRight().setDrawLabels(false);
+        mChart3.getAxisLeft().setDrawLabels(false);
+
+        mChart4 = findViewById(R.id.chart4);
+        setChart(mChart4);
+        setChart4Data(200, 400, mChart4, usdPrice);
+        setLegend(mChart4);
+        setAxis(mChart4, 500*2, 0);
+//        mChart4.getAxisLeft().setDrawLabels(false);
+//        mChart4.getAxisRight().setDrawLabels(false);
 
 
-        setAxis(mChart);
-        setAxis(mChart2);
+        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
+        mv.setChartView(mChart4); // For bounds control
+        mChart4.setMarker(mv); // Set the marker to the chart
     }
 
-    private void setAxis(LineChart chart) {
+    private void setAxis(LineChart chart,float max, float min) {
         int range = 400;
         // X 轴
         XAxis xAxis = chart.getXAxis();
@@ -129,8 +127,8 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         YAxis leftAxis = chart.getAxisLeft();
         leftAxis.setTypeface(mTfLight);
         leftAxis.setTextColor(0xff317DEC);
-        leftAxis.setAxisMaximum(range);
-        leftAxis.setAxisMinimum(range/4);
+        leftAxis.setAxisMaximum(max);
+        leftAxis.setAxisMinimum(min);
         leftAxis.setDrawGridLines(true);
         leftAxis.setAxisLineColor(grayTransparent);
         leftAxis.setGridColor(grayTransparent);
@@ -148,8 +146,8 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         rightAxis.setTypeface(mTfLight);
         rightAxis.setAxisLineColor(grayTransparent);
         rightAxis.setTextColor(0xff009B8B);
-        rightAxis.setAxisMaximum(900);
-        rightAxis.setAxisMinimum(0);
+        rightAxis.setAxisMaximum(max);
+        rightAxis.setAxisMinimum(min);
         rightAxis.setDrawGridLines(false);
         rightAxis.setDrawZeroLine(false);
         rightAxis.setGranularityEnabled(true);
@@ -170,6 +168,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         // 底部那个叫啥我忘了，表示哪根线代表啥，那根线又代表啥的用处——貌似叫图例
         // get the legend (only possible after setting data)
         Legend l = chart.getLegend(); // modify the legend ...
+//        l.setEnabled(false);
         l.setForm(LegendForm.SQUARE);
         l.setTypeface(mTfLight);
         l.setTextSize(11f);
@@ -192,7 +191,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
 
         // no description text
         chart.getDescription().setEnabled(false);
-        chart.setBackgroundColor(Color.WHITE);
+        chart.setBackgroundColor(Color.TRANSPARENT);
 
         // enable touch gestures
         chart.setTouchEnabled(true);
@@ -361,13 +360,13 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         tvX.setText("" + (mSeekBarX.getProgress() + 1));
         tvY.setText("" + (mSeekBarY.getProgress()));
 
-        setData(mSeekBarX.getProgress() + 1, mSeekBarY.getProgress(), mChart);
+        setChart1Data(mSeekBarX.getProgress() + 1, mSeekBarY.getProgress(), mChart, usdPrice);
 
         // redraw
         mChart.invalidate();
     }
 
-    private void setData(int count, float range, LineChart chart) {
+    private void setChart1Data(int count, float range, LineChart chart, ArrayList<Entry> list) {
         LineDataSet set1;
 
         if (chart.getData() != null &&
@@ -375,25 +374,15 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
             set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
 //            set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
 //            set3 = (LineDataSet) chart.getData().getDataSetByIndex(2);
-            set1.setValues(yVals1);
-//            set2.setValues(yVals2);
-//            set3.setValues(yVals3);
+            set1.setValues(list);
+//            set2.setValues(btcPrice);
+//            set3.setValues(volume);
             chart.getData().notifyDataChanged();
             chart.notifyDataSetChanged();
         } else {
             // create a dataset and give it a type
-            set1 = new LineDataSet(yVals1, "DataSet 1");
-
+            set1 = new LineDataSet(list, "DataSet 1");
             set1.setAxisDependency(AxisDependency.LEFT);
-//            set1.setColor(ColorTemplate.getHoloBlue());
-//            set1.setCircleColor(Color.WHITE);
-//            set1.setLineWidth(2f);
-//            set1.setCircleRadius(3f);
-//            set1.setFillAlpha(65);
-//            set1.setFillColor(ColorTemplate.getHoloBlue());
-//            set1.setHighLightColor(Color.rgb(244, 117, 117));
-//            set1.setDrawCircleHole(false);
-
             set1.setDrawIcons(false);
             set1.setColor(0xff859795);
             set1.setLineWidth(2f);
@@ -404,61 +393,124 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
             set1.setFormSize(15.f);
             set1.setFillDrawable(getResources().getDrawable(R.drawable.set1));
             set1.setLabel("BTC价格");
-
-            //set1.setFillFormatter(new MyFillFormatter(0f));
-            //set1.setDrawHorizontalHighlightIndicator(false);
-            //set1.setVisible(false);
-            //set1.setCircleHoleColor(Color.WHITE);
-
-//            // create a dataset and give it a type
-//            set2 = new LineDataSet(yVals2, "DataSet 2");
-//            set2.setAxisDependency(AxisDependency.RIGHT);
-////            set2.setColor(Color.RED);
-////            set2.setCircleColor(Color.WHITE);
-////            set2.setLineWidth(2f);
-////            set2.setCircleRadius(3f);
-////            set2.setFillAlpha(65);
-////            set2.setFillColor(Color.RED);
-////            set2.setDrawCircleHole(false);
-////            set2.setHighLightColor(Color.rgb(244, 117, 117));
-////            //set2.setFillFormatter(new MyFillFormatter(900f));
-//
-//            set2.setDrawIcons(false);
-//            set2.setColor(0xff27AB9D);
-//            set2.setLineWidth(2f);
-//            set2.setValueTextSize(9f);
-//            set2.setDrawFilled(false);
-//            set2.setFormLineWidth(1f);
-//            set2.setDrawCircles(false);
-//            set2.setFormSize(15.f);
-//
-//            set3 = new LineDataSet(yVals3, "DataSet 3");
-//            set3.setAxisDependency(AxisDependency.RIGHT);
-////            set3.setColor(Color.YELLOW);
-////            set3.setCircleColor(Color.WHITE);
-////            set3.setLineWidth(2f);
-////            set3.setCircleRadius(3f);
-////            set3.setFillAlpha(65);
-////            set3.setFillColor(ColorTemplate.colorWithAlpha(Color.YELLOW, 200));
-////            set3.setDrawCircleHole(false);
-////            set3.setHighLightColor(Color.rgb(244, 117, 117));
-//            set3.setDrawIcons(false);
-//            set3.setColor(Color.BLUE);
-//            set3.setLineWidth(2f);
-//            set3.setValueTextSize(9f);
-//            set3.setDrawFilled(false);
-//            set3.setFormLineWidth(0.1f);
-//            set3.setDrawCircles(false);
-//            set3.setFormSize(15.f);
-//            set2.setLabel("美元价格");
-//            set3.setLabel("24h小时成交");
-//
-//
-//            set2.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-//            set3.setMode(LineDataSet.Mode.CUBIC_BEZIER);
             set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
             // create a data object with the datasets
-            LineData data = new LineData(set1/*, set2, set3*/);
+            LineData data = new LineData(set1);
+            data.setValueTextColor(Color.WHITE);
+            data.setValueTextSize(9f);
+            data.setDrawValues(false);
+
+            // set data
+            chart.setData(data);
+        }
+    }
+    private void setChart3Data(int count, float range, LineChart chart, ArrayList<Entry> list) {
+        LineDataSet set1;
+
+        if (chart.getData() != null &&
+                chart.getData().getDataSetCount() > 0) {
+            set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
+//            set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
+//            set3 = (LineDataSet) chart.getData().getDataSetByIndex(2);
+            set1.setValues(list);
+//            set2.setValues(btcPrice);
+//            set3.setValues(volume);
+            chart.getData().notifyDataChanged();
+            chart.notifyDataSetChanged();
+        } else {
+            // create a dataset and give it a type
+            set1 = new LineDataSet(list, "DataSet 1");
+            set1.setAxisDependency(AxisDependency.LEFT);
+            set1.setDrawIcons(false);
+            set1.setColor(0xff27AB9D);
+            set1.setLineWidth(2f);
+            set1.setValueTextSize(9f);
+            set1.setDrawFilled(false);
+            set1.setFormLineWidth(1f);
+            set1.setDrawCircles(false);
+            set1.setFormSize(15.f);
+            set1.setFillDrawable(getResources().getDrawable(R.drawable.set1));
+            set1.setLabel("BTC价格");
+            set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+            // create a data object with the datasets
+            LineData data = new LineData(set1);
+            data.setValueTextColor(Color.WHITE);
+            data.setValueTextSize(9f);
+            data.setDrawValues(false);
+
+            // set data
+            chart.setData(data);
+        }
+    }
+    private void setChart2Data(int count, float range, LineChart chart, ArrayList<Entry> list) {
+        LineDataSet set1;
+
+        if (chart.getData() != null &&
+                chart.getData().getDataSetCount() > 0) {
+            set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
+//            set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
+//            set3 = (LineDataSet) chart.getData().getDataSetByIndex(2);
+            set1.setValues(list);
+//            set2.setValues(btcPrice);
+//            set3.setValues(volume);
+            chart.getData().notifyDataChanged();
+            chart.notifyDataSetChanged();
+        } else {
+            // create a dataset and give it a type
+            set1 = new LineDataSet(list, "美元价格");
+            set1.setDrawIcons(false);
+            set1.setLineWidth(2f);
+            set1.setValueTextSize(9f);
+            set1.setFormLineWidth(1f);
+            set1.setFormSize(15.f);
+            set1.setFillDrawable(getResources().getDrawable(R.drawable.set1));
+            set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+            set1.setDrawCircles(false);
+            set1.setAxisDependency(AxisDependency.RIGHT);
+
+            set1.setColor(0xff27AB9D);
+            set1.setDrawFilled(false);
+            // create a data object with the datasets
+            LineData data = new LineData(set1);
+            data.setValueTextColor(Color.WHITE);
+            data.setValueTextSize(9f);
+            data.setDrawValues(false);
+
+            // set data
+            chart.setData(data);
+        }
+    }
+
+    private void setChart4Data(int count, float range, LineChart chart, ArrayList<Entry> list) {
+        LineDataSet set1;
+
+        if (chart.getData() != null &&
+                chart.getData().getDataSetCount() > 0) {
+            set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
+//            set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
+//            set3 = (LineDataSet) chart.getData().getDataSetByIndex(2);
+            set1.setValues(list);
+//            set2.setValues(btcPrice);
+//            set3.setValues(volume);
+            chart.getData().notifyDataChanged();
+            chart.notifyDataSetChanged();
+        } else {
+            // create a dataset and give it a type
+            set1 = new LineDataSet(list, "美元价格");
+            set1.setDrawIcons(false);
+            set1.setLineWidth(2f);
+            set1.setValueTextSize(9f);
+            set1.setFormLineWidth(1f);
+            set1.setFormSize(15.f);
+            set1.setFillDrawable(getResources().getDrawable(R.drawable.set1));
+            set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+            set1.setDrawCircles(false);
+            set1.setAxisDependency(AxisDependency.RIGHT);
+
+            set1.setColor(0xffF08422);
+            set1.setDrawFilled(false);
+            // create a data object with the datasets
+            LineData data = new LineData(set1);
             data.setValueTextColor(Color.WHITE);
             data.setValueTextSize(9f);
             data.setDrawValues(false);
@@ -469,9 +521,10 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
     }
 
     private void initArrayList(int count, float range) {
-        yVals1 = new ArrayList<Entry>();
-        yVals2 = new ArrayList<Entry>();
-        yVals3 = new ArrayList<Entry>();
+        usdPrice = new ArrayList<Entry>();
+        btcPrice = new ArrayList<Entry>();
+        volume = new ArrayList<Entry>();
+        tradeCount = new ArrayList<Entry>();
         if (mockData.length() > 0){
 //            for ()
             Gson gson = new Gson();
@@ -481,30 +534,31 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
                 List<String> values = list.get(i);
                 int size = values.size();
                 Double time = Double.parseDouble(values.get(0).toString());
-                Double btcPrice = Double.parseDouble(values.get(1).toString());
-                Double usdPrice = Double.parseDouble(values.get(2).toString());
-                Double cap = Double.parseDouble(values.get(3).toString());
-                Double volume = Double.parseDouble(values.get(4).toString());
-                yVals1.add(new Entry(i, btcPrice.floatValue()));
-                yVals2.add(new Entry(i, usdPrice.floatValue()));
-                yVals3.add(new Entry(i, cap.floatValue()));
+                Double usdprice = Double.parseDouble(values.get(1).toString());
+                Double btcprice = Double.parseDouble(values.get(2).toString());
+                Double volume = Double.parseDouble(values.get(3).toString());
+                Double tradeCount = Double.parseDouble(values.get(4).toString());
+                usdPrice.add(new Entry(i, usdprice.floatValue()));
+                btcPrice.add(new Entry(i, btcprice.floatValue()));
+                this.volume.add(new Entry(i, volume.floatValue()));
+                this.tradeCount.add(new Entry(i, tradeCount.floatValue()));
             }
         } else {
             for (int i = 0; i < count; i++) {
                 float mult = range / 2f;
                 float val = (float) (Math.random() * 100) + mult;
-                yVals1.add(new Entry(i, val));
+                usdPrice.add(new Entry(i, val));
             }
 
             for (int i = 0; i < count; i++) {
                 float mult = range;
                 float val = (float) (Math.random() * mult) + 450;
-                yVals2.add(new Entry(i, val));
+                btcPrice.add(new Entry(i, val));
             }
             for (int i = 0; i < count; i++) {
                 float mult = range;
                 float val = (float) (Math.random() * mult) + 500;
-                yVals3.add(new Entry(i, val));
+                volume.add(new Entry(i, val));
             }
         }
     }

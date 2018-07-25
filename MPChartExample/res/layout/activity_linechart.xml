@@ -20,6 +20,22 @@
         android:layout_width="match_parent"
         android:layout_height="252dp"
         android:layout_above="@+id/seekBar1" />
+    <com.github.mikephil.charting.charts.LineChart
+        android:layout_marginTop="16dp"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:id="@+id/chart3"
+        android:layout_width="match_parent"
+        android:layout_height="252dp"
+        android:layout_above="@+id/seekBar1" />
+    <com.github.mikephil.charting.charts.LineChart
+        android:layout_marginTop="16dp"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:id="@+id/chart4"
+        android:layout_width="match_parent"
+        android:layout_height="252dp"
+        android:layout_above="@+id/seekBar1" />
     <SeekBar
         android:visibility="gone"
         android:id="@+id/seekBar2"
