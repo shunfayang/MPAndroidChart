@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendForm;
 import com.github.mikephil.charting.components.LimitLine;
@@ -28,6 +29,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
@@ -47,6 +49,7 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
     private LineChart mChart;
     private SeekBar mSeekBarX, mSeekBarY;
     private TextView tvX, tvY;
+    private float min = 6584f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +75,7 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
         mChart.setOnChartValueSelectedListener(this);
         mChart.setDrawGridBackground(false);
 
+        int range = 8000;
         // no description text
         mChart.getDescription().setEnabled(false);
 
@@ -79,8 +83,11 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
         mChart.setTouchEnabled(true);
 
         // enable scaling and dragging
-        mChart.setDragEnabled(true);
-        mChart.setScaleEnabled(true);
+        mChart.setDragEnabled(false);
+        mChart.setScaleEnabled(false);
+//        mChart.setVisibleYRangeMinimum(0, YAxis.AxisDependency.LEFT);
+//        mChart.setVisibleXRangeMinimum(0f);
+//        mChart.setVisibleXRange(0f, range);
         // mChart.setScaleXEnabled(true);
         // mChart.setScaleYEnabled(true);
 
@@ -92,16 +99,16 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
 
         // create a custom MarkerView (extend MarkerView) and specify the layout
         // to use for it
-//        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
-//        mv.setChartView(mChart); // For bounds control
-//        mChart.setMarker(mv); // Set the marker to the chart
+        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
+        mv.setChartView(mChart); // For bounds control
+        mChart.setMarker(mv); // Set the marker to the chart
 
         // x-axis limit line
-        LimitLine llXAxis = new LimitLine(10f, "Index 10");
-        llXAxis.setLineWidth(4f);
-        llXAxis.enableDashedLine(10f, 10f, 0f);
-        llXAxis.setLabelPosition(LimitLabelPosition.RIGHT_BOTTOM);
-        llXAxis.setTextSize(10f);
+//        LimitLine llXAxis = new LimitLine(10f, "Index 10");
+//        llXAxis.setLineWidth(4f);
+//        llXAxis.enableDashedLine(10f, 10f, 0f);
+//        llXAxis.setLabelPosition(LimitLabelPosition.RIGHT_BOTTOM);
+//        llXAxis.setTextSize(10f);
 
         XAxis xAxis = mChart.getXAxis();
         xAxis.enableGridDashedLine(10f, 10f, 0f);
@@ -109,10 +116,9 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
         //xAxis.addLimitLine(llXAxis); // add x-axis limit line
         xAxis.setDrawGridLines(true);
         xAxis.setGridDashedLine(new DashPathEffect(new float[]{100f, 0f}, 0f));
+        xAxis.setDrawAxisLine(true);
 
-
-        Typeface tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
-
+//        Typeface tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
 //        LimitLine ll1 = new LimitLine(150f, "Upper Limit");
 //        ll1.setLineWidth(4f);
 //        ll1.enableDashedLine(10f, 10f, 0f);
@@ -131,31 +137,47 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
         leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
 //        leftAxis.addLimitLine(ll1);
 //        leftAxis.addLimitLine(ll2);
-        leftAxis.setAxisMaximum(200f);
-        leftAxis.setAxisMinimum(-50f);
+        leftAxis.setAxisMaximum(range);
+        leftAxis.setAxisMinimum(0f);
         //leftAxis.setYOffset(20f);
         leftAxis.enableGridDashedLine(10f, 0f, 0f);
         leftAxis.setGridDashedLine(new DashPathEffect(new float[]{100f, 0f}, 0f));
-        leftAxis.setDrawZeroLine(false);
+        leftAxis.setDrawZeroLine(true);
+        leftAxis.setDrawLabels(false);
+        leftAxis.setDrawAxisLine(false);
+        leftAxis.setDrawGridLines(false);
+        leftAxis.setSpaceBottom(1f);
+//        leftAxis.setValueFormatter(new IAxisValueFormatter() {
+//            @Override
+//            public String getFormattedValue(float value, AxisBase axis) {
+//                return "";
+//            }
+//        });
+
 
         // limit lines are drawn behind data (and not on top)
-        leftAxis.setDrawLimitLinesBehindData(true);
-
-        mChart.getAxisRight().setEnabled(false);
+        YAxis rightAxis = mChart.getAxisRight();
+        rightAxis.setTypeface(mTfLight);
+        rightAxis.setTextColor(Color.RED);
+        rightAxis.setAxisMaximum(range);
+        rightAxis.setAxisMinimum(0);
+        rightAxis.setDrawGridLines(true);
+        rightAxis.setDrawZeroLine(false);
+        rightAxis.setGranularityEnabled(true);
+        rightAxis.setGranularity(1f);
+        rightAxis.setSpaceBottom(1f);
+        rightAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return "$" + value;
+            }
+        });
 
         //mChart.getViewPortHandler().setMaximumScaleY(2f);
         //mChart.getViewPortHandler().setMaximumScaleX(2f);
 
         // add data
-        setData(40, 100);
-        LineData lineData = mChart.getLineData();
-        lineData.setDrawValues(false);
-        List<ILineDataSet> dataSets = lineData.getDataSets();
-        for (ILineDataSet set : dataSets){
-            LineDataSet dataSet = (LineDataSet) set;
-            dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-            dataSet.setFillColor(Color.BLUE);
-        }
+        setData(20, range);
 
 //        mChart.setVisibleXRange(20);
 //        mChart.setVisibleYRange(20f, AxisDependency.LEFT);
@@ -371,9 +393,10 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
 
         for (int i = 0; i < count; i++) {
 
-            float val = (float) (Math.random() * range) + 3;
+            float val = (float) (Math.random() * range) + range/4;
             values.add(new Entry(i, val, getResources().getDrawable(R.drawable.star)));
         }
+        Log.d("mpchart", values.toString());
 
         LineDataSet set1;
 
@@ -392,33 +415,35 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
             // set the line to be drawn like this "- - - - - -"
 //            set1.enableDashedLine(10f, 5f, 0f);
 //            set1.enableDashedHighlightLine(10f, 5f, 0f);
-            set1.setColor(0xff27AB9D);
+            set1.setColor(0xff2F80F6);
 //            set1.setCircleColor(Color.BLACK);
             set1.setLineWidth(2f);
 //            set1.setCircleRadius(3f);
 //            set1.setDrawCircleHole(false);
             set1.setValueTextSize(9f);
-            set1.setDrawFilled(false);
+            set1.setDrawFilled(true);
+            set1.setFillDrawable(getResources().getDrawable(R.drawable.line1));
             set1.setFormLineWidth(1f);
             set1.setDrawCircles(false);
 //            set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
             set1.setFormSize(15.f);
+            set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
 
-            if (Utils.getSDKInt() >= 18) {
-                // fill drawable only supported on api level 18 and above
-                Drawable drawable = ContextCompat.getDrawable(this, R.drawable.fade_red);
-                set1.setFillDrawable(drawable);
-            }
-            else {
-                set1.setFillColor(Color.BLACK);
-            }
+//            if (Utils.getSDKInt() >= 18) {
+//                // fill drawable only supported on api level 18 and above
+//                Drawable drawable = ContextCompat.getDrawable(this, R.drawable.fade_red);
+//                set1.setFillDrawable(drawable);
+//            }
+//            else {
+//                set1.setFillColor(Color.BLACK);
+//            }
 
             ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
             dataSets.add(set1); // add the datasets
 
             // create a data object with the datasets
             LineData data = new LineData(dataSets);
-
+            data.setDrawValues(false);
             // set data
             mChart.setData(data);
         }
