@@ -104,9 +104,17 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         setLegend(mChartTradeCount);
         // 显示位置
         setAxis(mChartTradeCount, Double.valueOf("1.63532902E9").floatValue()*2f, Double.valueOf("1.63532902E9").floatValue()*0.8f);
-        mChartTradeCount.getAxisRight().setDrawLabels(false);
-        mChartTradeCount.getAxisLeft().setDrawGridLines(true);
-        mChartTradeCount.getXAxis().setDrawGridLines(true);
+        YAxis axisRight = mChartTradeCount.getAxisRight();
+        axisRight.setDrawLabels(false);
+        YAxis axisLeft = mChartTradeCount.getAxisLeft();
+        axisLeft.setDrawGridLines(true);
+        XAxis xAxis = mChartTradeCount.getXAxis();
+        xAxis.setDrawGridLines(true);
+        xAxis.setDrawLabels(true);
+        axisLeft.setDrawLabels(true);
+        axisRight.setDrawLabels(true);
+
+
 
 //        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
 //        mv.setChartView(mChartUsdPrice); // For bounds control
