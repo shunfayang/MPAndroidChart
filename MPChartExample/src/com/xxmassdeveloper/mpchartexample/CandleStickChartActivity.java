@@ -55,29 +55,33 @@ public class CandleStickChartActivity extends DemoBase implements OnSeekBarChang
 
         // if more than 60 entries are displayed in the chart, no values will be
         // drawn
-        mChart.setMaxVisibleValueCount(60);
+        mChart.setMaxVisibleValueCount(10);
 
         // scaling can now only be done on x- and y-axis separately
-        mChart.setPinchZoom(false);
+        mChart.setPinchZoom(true);
 
         mChart.setDrawGridBackground(false);
+        mChart.setVisibleXRange(0f, 10f);
 
         XAxis xAxis = mChart.getXAxis();
         xAxis.setPosition(XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
+        xAxis.setDrawGridLines(true);
+        xAxis.setLabelCount(5, true);
 
         YAxis leftAxis = mChart.getAxisLeft();  
 //        leftAxis.setEnabled(false);
-        leftAxis.setLabelCount(7, false);
-        leftAxis.setDrawGridLines(false);
-        leftAxis.setDrawAxisLine(false);
+        leftAxis.setLabelCount(5, true);
+        leftAxis.setDrawGridLines(true);
+        leftAxis.setDrawAxisLine(true);
         
         YAxis rightAxis = mChart.getAxisRight();
-        rightAxis.setEnabled(false);
+//        rightAxis.setEnabled(true);
+        rightAxis.setDrawAxisLine(true);
+        rightAxis.setDrawGridLines(false);
 //        rightAxis.setStartAtZero(false);
 
         // setting data
-        mSeekBarX.setProgress(40);
+        mSeekBarX.setProgress(200);
         mSeekBarY.setProgress(100);
         
         mChart.getLegend().setEnabled(false);
@@ -178,11 +182,11 @@ public class CandleStickChartActivity extends DemoBase implements OnSeekBarChang
             float mult = (mSeekBarY.getProgress() + 1);
             float val = (float) (Math.random() * 40) + mult;
             
-            float high = (float) (Math.random() * 9) + 8f;
-            float low = (float) (Math.random() * 9) + 8f;
+            float high = (float) (Math.random() * 2) + 2f;
+            float low = (float) (Math.random() * 2) + 2f;
             
-            float open = (float) (Math.random() * 6) + 1f;
-            float close = (float) (Math.random() * 6) + 1f;
+            float open = (float) (Math.random() * 4) + 1f;
+            float close = (float) (Math.random() * 4) + 1f;
 
             boolean even = i % 2 == 0;
 
@@ -201,11 +205,11 @@ public class CandleStickChartActivity extends DemoBase implements OnSeekBarChang
         set1.setAxisDependency(AxisDependency.LEFT);
 //        set1.setColor(Color.rgb(80, 80, 80));
         set1.setShadowColor(Color.DKGRAY);
-        set1.setShadowWidth(0.7f);
+        set1.setShadowWidth(0.5f);
         set1.setDecreasingColor(Color.RED);
         set1.setDecreasingPaintStyle(Paint.Style.FILL);
         set1.setIncreasingColor(Color.rgb(122, 242, 84));
-        set1.setIncreasingPaintStyle(Paint.Style.STROKE);
+        set1.setIncreasingPaintStyle(Paint.Style.FILL);
         set1.setNeutralColor(Color.BLUE);
         //set1.setHighlightLineWidth(1f);
 
