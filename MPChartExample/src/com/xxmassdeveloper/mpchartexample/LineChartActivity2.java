@@ -84,7 +84,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         setChart(mChartVolume);
         setChart3Data(200, 400, mChartVolume, volume);
         setLegend(mChartVolume);
-        setAxis(mChartVolume, Double.valueOf("4.8426103E10").floatValue()*1.1f, Double.valueOf("4.8426103E10").floatValue()*0.9f);
+        setAxis(mChartVolume, Double.valueOf("4.8426103E10").floatValue()*1.1f, Double.valueOf("4.8426103E10").floatValue()*0.8f);
         mChartVolume.getAxisRight().setDrawLabels(false);
         mChartVolume.getAxisLeft().setDrawLabels(false);
 
@@ -92,21 +92,25 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         setChart(mChartUsdPrice);
         setChart4Data(200, 400, mChartUsdPrice, usdPrice);
         setLegend(mChartUsdPrice);
-        setAxis(mChartUsdPrice, 500, 470);// 不能写死
+        setAxis(mChartUsdPrice, 480*1.1f, 480*0.8f);// 不能写死
 //        mChartUsdPrice.getAxisLeft().setDrawLabels(false);
 //        mChartUsdPrice.getAxisRight().setDrawLabels(false);
 
         // 底部填充的视图
         mChartTradeCount = findViewById(R.id.chart1);
         setChart(mChartTradeCount);
+        mChartTradeCount.setBackgroundColor(Color.WHITE);
         setChart1Data(200, 400, mChartTradeCount, tradeCount);
         setLegend(mChartTradeCount);
-        setAxis(mChartTradeCount, Double.valueOf("1.63532902E9").floatValue()*1.1f, Double.valueOf("1.63532902E9").floatValue()*0.5f);
+        // 显示位置
+        setAxis(mChartTradeCount, Double.valueOf("1.63532902E9").floatValue()*2f, Double.valueOf("1.63532902E9").floatValue()*0.5f);
         mChartTradeCount.getAxisRight().setDrawLabels(false);
+        mChartTradeCount.getAxisLeft().setDrawGridLines(true);
+        mChartTradeCount.getXAxis().setDrawGridLines(true);
 
-        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
-        mv.setChartView(mChartUsdPrice); // For bounds control
-        mChartUsdPrice.setMarker(mv); // Set the marker to the chart
+//        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
+//        mv.setChartView(mChartUsdPrice); // For bounds control
+//        mChartUsdPrice.setMarker(mv); // Set the marker to the chart
     }
 
     private void setAxis(LineChart chart,float max, float min) {
@@ -115,9 +119,9 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         XAxis xAxis = chart.getXAxis();
         xAxis.setTypeface(mTfLight);
         xAxis.setTextSize(11f);
-        xAxis.setDrawGridLines(true);
+        xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(true);
-        xAxis.setDrawLabels(true);
+        xAxis.setDrawLabels(false);
         int grayTransparent = 0x22222222;
         xAxis.setTextColor(grayTransparent);
         xAxis.setLabelCount(5, true);
@@ -130,7 +134,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         leftAxis.setTextColor(0xff317DEC);
         leftAxis.setAxisMaximum(max);
         leftAxis.setAxisMinimum(min);
-        leftAxis.setDrawGridLines(true);
+        leftAxis.setDrawGridLines(false);
         leftAxis.setAxisLineColor(grayTransparent);
         leftAxis.setGridColor(grayTransparent);
         leftAxis.setGranularityEnabled(true);
@@ -139,6 +143,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         leftAxis.setLabelCount(5, true);
         leftAxis.setmDrawBottomYLabelEntry(false);
         leftAxis.setDrawTopYLabelEntry(false);
+        leftAxis.setDrawLabels(false);
         leftAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
 
         // 右边 Y 轴
@@ -149,6 +154,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         rightAxis.setTextColor(0xff009B8B);
         rightAxis.setAxisMaximum(max);
         rightAxis.setAxisMinimum(min);
+        rightAxis.setDrawLabels(false);
         rightAxis.setDrawGridLines(false);
         rightAxis.setDrawZeroLine(false);
         rightAxis.setGranularityEnabled(true);
@@ -169,7 +175,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         // 底部那个叫啥我忘了，表示哪根线代表啥，那根线又代表啥的用处——貌似叫图例
         // get the legend (only possible after setting data)
         Legend l = chart.getLegend(); // modify the legend ...
-//        l.setEnabled(false);
+        l.setEnabled(false);
         l.setForm(LegendForm.SQUARE);
         l.setTypeface(mTfLight);
         l.setTextSize(11f);
@@ -386,10 +392,10 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
             set1.setAxisDependency(AxisDependency.LEFT);
             set1.setDrawIcons(false);
             set1.setColor(0xff859795);
-            set1.setLineWidth(2f);
+            set1.setLineWidth(0f);
             set1.setValueTextSize(9f);
             set1.setDrawFilled(true);
-            set1.setFormLineWidth(1f);
+            set1.setFormLineWidth(0f);
             set1.setDrawCircles(false);
             set1.setFormSize(15.f);
             set1.setFillDrawable(getResources().getDrawable(R.drawable.set1));
