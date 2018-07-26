@@ -103,7 +103,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         setChart1Data(200, 400, mChartTradeCount, tradeCount);
         setLegend(mChartTradeCount);
         // 显示位置
-        setAxis(mChartTradeCount, Double.valueOf("1.63532902E9").floatValue()*2f, Double.valueOf("1.63532902E9").floatValue()*0.5f);
+        setAxis(mChartTradeCount, Double.valueOf("1.63532902E9").floatValue()*2f, Double.valueOf("1.63532902E9").floatValue()*0.8f);
         mChartTradeCount.getAxisRight().setDrawLabels(false);
         mChartTradeCount.getAxisLeft().setDrawGridLines(true);
         mChartTradeCount.getXAxis().setDrawGridLines(true);
@@ -201,18 +201,18 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         chart.setBackgroundColor(Color.TRANSPARENT);
 
         // enable touch gestures
-        chart.setTouchEnabled(true);
+        chart.setTouchEnabled(false);
 
         chart.setDragDecelerationFrictionCoef(0.9f);
 
         // enable scaling and dragging
-        chart.setDragEnabled(false);
-        chart.setScaleEnabled(false);
+        chart.setDragEnabled(true);
+        chart.setScaleEnabled(true);
         chart.setDrawGridBackground(false);
         chart.setHighlightPerDragEnabled(true);
 
         // if disabled, scaling can be done on x- and y-axis separately
-        chart.setPinchZoom(false);
+        chart.setPinchZoom(true);
     }
 
     @Override
@@ -379,27 +379,22 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         if (chart.getData() != null &&
                 chart.getData().getDataSetCount() > 0) {
             set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
-//            set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
-//            set3 = (LineDataSet) chart.getData().getDataSetByIndex(2);
             set1.setValues(list);
-//            set2.setValues(btcPrice);
-//            set3.setValues(volume);
             chart.getData().notifyDataChanged();
             chart.notifyDataSetChanged();
         } else {
             // create a dataset and give it a type
-            set1 = new LineDataSet(list, "DataSet 1");
+            set1 = new LineDataSet(list, "BTC价格");
             set1.setAxisDependency(AxisDependency.LEFT);
             set1.setDrawIcons(false);
             set1.setColor(0xff859795);
-            set1.setLineWidth(0f);
+            set1.setLineWidth(1f);
             set1.setValueTextSize(9f);
             set1.setDrawFilled(true);
-            set1.setFormLineWidth(0f);
+            set1.setFormLineWidth(1f);
             set1.setDrawCircles(false);
             set1.setFormSize(15.f);
             set1.setFillDrawable(getResources().getDrawable(R.drawable.set1));
-            set1.setLabel("BTC价格");
             set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
             // create a data object with the datasets
             LineData data = new LineData(set1);
@@ -417,11 +412,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         if (chart.getData() != null &&
                 chart.getData().getDataSetCount() > 0) {
             set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
-//            set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
-//            set3 = (LineDataSet) chart.getData().getDataSetByIndex(2);
             set1.setValues(list);
-//            set2.setValues(btcPrice);
-//            set3.setValues(volume);
             chart.getData().notifyDataChanged();
             chart.notifyDataSetChanged();
         } else {
@@ -455,11 +446,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         if (chart.getData() != null &&
                 chart.getData().getDataSetCount() > 0) {
             set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
-//            set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
-//            set3 = (LineDataSet) chart.getData().getDataSetByIndex(2);
             set1.setValues(list);
-//            set2.setValues(btcPrice);
-//            set3.setValues(volume);
             chart.getData().notifyDataChanged();
             chart.notifyDataSetChanged();
         } else {
@@ -494,11 +481,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
         if (chart.getData() != null &&
                 chart.getData().getDataSetCount() > 0) {
             set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
-//            set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
-//            set3 = (LineDataSet) chart.getData().getDataSetByIndex(2);
             set1.setValues(list);
-//            set2.setValues(btcPrice);
-//            set3.setValues(volume);
             chart.getData().notifyDataChanged();
             chart.notifyDataSetChanged();
         } else {

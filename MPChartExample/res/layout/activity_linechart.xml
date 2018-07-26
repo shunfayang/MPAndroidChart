@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="252dp">
 
     <com.github.mikephil.charting.charts.LineChart
         android:layout_marginTop="16dp"
@@ -36,6 +36,43 @@
         android:layout_width="match_parent"
         android:layout_height="252dp"
         android:layout_above="@+id/seekBar1" />
+    <LinearLayout
+        android:visibility="gone"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_height="184dp">
+        <TextView
+            android:textSize="11sp"
+            android:gravity="center"
+            android:paddingBottom="8dp"
+            android:textColor="#317DEC"
+            android:text="$1,292.33亿"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="0dp" />
+        <TextView
+            android:textSize="11sp"
+            android:gravity="center"
+            android:paddingBottom="8dp"
+            android:textColor="#317DEC"
+            android:text="$1,292.33亿"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="0dp" />
+        <TextView
+            android:textSize="11sp"
+            android:gravity="center"
+            android:paddingBottom="8dp"
+            android:textColor="#317DEC"
+            android:text="$1,292.33亿"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="0dp" />
+    </LinearLayout>
     <SeekBar
         android:visibility="gone"
         android:id="@+id/seekBar2"
