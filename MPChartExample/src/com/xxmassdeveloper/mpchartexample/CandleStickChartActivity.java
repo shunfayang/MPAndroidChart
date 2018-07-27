@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -20,17 +21,27 @@ import com.github.mikephil.charting.components.YAxis.AxisDependency;
 import com.github.mikephil.charting.data.CandleData;
 import com.github.mikephil.charting.data.CandleDataSet;
 import com.github.mikephil.charting.data.CandleEntry;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.interfaces.datasets.ICandleDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IDataSet;
+import com.github.mikephil.charting.matrix.Vector3;
+import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.xxmassdeveloper.mpchartexample.moose.JsonUtils;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CandleStickChartActivity extends DemoBase implements OnSeekBarChangeListener {
 
     private CandleStickChart mChart;
     private SeekBar mSeekBarX, mSeekBarY;
     private TextView tvX, tvY;
+    private String mockData;
+    private ArrayList<CandleEntry> usdPriceList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +59,37 @@ public class CandleStickChartActivity extends DemoBase implements OnSeekBarChang
         mSeekBarY = findViewById(R.id.seekBar2);
         mSeekBarY.setOnSeekBarChangeListener(this);
 
+        //
+        mockData = JsonUtils.getJsonData(this);
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<List<String>>>() {}.getType();
+        List<List<String>> list = gson.fromJson(mockData, type);
+        usdPriceList = new ArrayList<CandleEntry>();
+        for (int i = 0; i<100; i++) {
+            List<String> values = list.get(i);
+            Double btcprice = Double.parseDouble(values.get(1));
+//            usdPriceList.add(new Entry(i, btcprice.floatValue()));
+            float v = btcprice.floatValue();
+            float close = 10f;
+            if (i < 10){
+                close = -i;
+            }
+            if (i < 20 && i> 10){
+                close = i;
+            }
+            if (i < 30 && i> 20){
+                close = i;
+            }
+            if (i < 40 && i> 30){
+                close = -i;
+            }
+            if (i < 100 && i> 40){
+                close = -i;
+            }
+            usdPriceList.add(new CandleEntry(i, v + 10,v- 10,v-close, v+close));
+        }
+        //
+
         mChart = findViewById(R.id.chart1);
         mChart.setBackgroundColor(Color.WHITE);
 
@@ -59,9 +101,20 @@ public class CandleStickChartActivity extends DemoBase implements OnSeekBarChang
 
         // scaling can now only be done on x- and y-axis separately
         mChart.setPinchZoom(true);
+        mChart.setScaleYEnabled(false);
+        mChart.setDragEnabled(true);
+        mChart.setDragYEnabled(false);
 
         mChart.setDrawGridBackground(false);
-        mChart.setVisibleXRange(0f, 10f);
+//        mChart.setVisibleXRange(0f, 10f);
+//        mChart.setVisibleXRangeMaximum();
+        mChart.setMaxVisibleValueCount(20);
+        mChart.setScaleMinima(4f, 1f);
+        ViewPortHandler viewPortHandler = mChart.getViewPortHandler();
+        viewPortHandler.setMinMaxScaleX(1f, 4f);
+        viewPortHandler.setDragOffsetX(100f);
+
+
 
         XAxis xAxis = mChart.getXAxis();
         xAxis.setPosition(XAxisPosition.BOTTOM);
@@ -73,7 +126,7 @@ public class CandleStickChartActivity extends DemoBase implements OnSeekBarChang
         leftAxis.setLabelCount(5, true);
         leftAxis.setDrawGridLines(true);
         leftAxis.setDrawAxisLine(true);
-        
+
         YAxis rightAxis = mChart.getAxisRight();
 //        rightAxis.setEnabled(true);
         rightAxis.setDrawAxisLine(true);
@@ -85,6 +138,14 @@ public class CandleStickChartActivity extends DemoBase implements OnSeekBarChang
         mSeekBarY.setProgress(100);
         
         mChart.getLegend().setEnabled(false);
+        mChart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mChart.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                float chartWidth = mChart.getViewPortHandler().getChartWidth();
+                mChart.moveViewToX(chartWidth);
+            }
+        });
     }
 
     @Override
@@ -200,9 +261,10 @@ public class CandleStickChartActivity extends DemoBase implements OnSeekBarChang
         }
 
         CandleDataSet set1 = new CandleDataSet(yVals1, "Data Set");
+//        CandleDataSet set1 = new CandleDataSet(usdPriceList, "Data Set");
 
         set1.setDrawIcons(false);
-        set1.setAxisDependency(AxisDependency.LEFT);
+//        set1.setAxisDependency(AxisDependency.LEFT);
 //        set1.setColor(Color.rgb(80, 80, 80));
         set1.setShadowColor(Color.DKGRAY);
         set1.setShadowWidth(0.5f);
@@ -211,12 +273,15 @@ public class CandleStickChartActivity extends DemoBase implements OnSeekBarChang
         set1.setIncreasingColor(Color.rgb(122, 242, 84));
         set1.setIncreasingPaintStyle(Paint.Style.FILL);
         set1.setNeutralColor(Color.BLUE);
+        set1.setDrawHorizontalHighlightIndicator(true);
+        set1.setAxisDependency(AxisDependency.RIGHT);
         //set1.setHighlightLineWidth(1f);
 
         CandleData data = new CandleData(set1);
-        
+        ViewPortHandler viewPortHandler = mChart.getViewPortHandler();
+//        viewPortHandler.translate(new float[]{viewPortHandler.getChartWidth(), 0f});
         mChart.setData(data);
-        mChart.invalidate();
+//        mChart.invalidate();
     }
 
     @Override

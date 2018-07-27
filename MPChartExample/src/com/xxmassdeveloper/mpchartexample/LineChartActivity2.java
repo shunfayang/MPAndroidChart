@@ -30,6 +30,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.xxmassdeveloper.mpchartexample.custom.MyMarkerView;
+import com.xxmassdeveloper.mpchartexample.moose.JsonUtils;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
 import java.io.BufferedReader;
@@ -59,7 +60,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_linechart);
 
-        mockData = getJsonData();
+        mockData = JsonUtils.getJsonData(this);
         initArrayList(200, 400);
         tvX = findViewById(R.id.tvXMax);
         tvY = findViewById(R.id.tvYMax);
@@ -559,33 +560,6 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
                 volume.add(new Entry(i, val));
             }
         }
-    }
-
-    @NonNull
-    private String getJsonData() {
-        BufferedReader reader = null;
-        String mockData = "";
-        try {
-            reader = new BufferedReader(new InputStreamReader(getAssets().open("data.TXT")));
-            StringBuilder sb = new StringBuilder();
-            String temp = "";
-            while( (temp = reader.readLine())!= null){
-                sb.append(temp);
-            }
-            mockData = sb.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-            if (reader != null){
-                try {
-                    reader.close();
-                    reader = null;
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                    reader = null;
-                }
-            }
-        }
-        return mockData;
     }
 
     @Override
